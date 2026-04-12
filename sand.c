@@ -8,13 +8,18 @@
 #define PIXELWIDTH 10
 
 const char *title = "Sand";
-Vector2 mousePosition;
 
 int bufferA[ROWS][COLS];
 int bufferB[ROWS][COLS];
 
 int (*currentBuffer)[COLS];
 int (*nextBuffer)[COLS];
+
+void playerClicked(){
+    int col = GetMousePosition().x / PIXELWIDTH;
+    int row = GetMousePosition().y / PIXELWIDTH;
+    currentBuffer[row][col] = 1;
+}
 
 void clearBuffer(int (*buffer)[COLS]){
     memset(buffer, 0, sizeof(bufferA));
@@ -29,12 +34,11 @@ void swapBuffers(){
 
 void setup(){
     InitWindow(WIDTH, HEIGHT, title);
-    SetTargetFPS(6);
+    SetTargetFPS(60);
     currentBuffer = bufferA;
     nextBuffer = bufferB;
     clearBuffer(currentBuffer);
     clearBuffer(nextBuffer);
-    currentBuffer[20][20] = 1; // remove after testing
 }
 
 void drawGame(){
@@ -49,11 +53,12 @@ void drawGame(){
 
 void updateGame(){
     for(int i = 0; i < ROWS; i++){
-        for(int j = 0; j < COLS - 1; j++){
+        for(int j = 0; j < COLS; j++){
             if(currentBuffer[i][j] == 1){
-                if(currentBuffer[i+1][j] == 0){
-                    nextBuffer[i][j] = 0;
+                if(currentBuffer[i+1][j] == 0 && i + 1 < ROWS){
                     nextBuffer[i+1][j] = 1;
+                } else {
+                    nextBuffer[i][j] = 1;
                 }
             }
         }
@@ -66,6 +71,7 @@ int main(){
     while(!WindowShouldClose()){
         BeginDrawing();
             ClearBackground(BLACK);
+            if(IsMouseButtonUp(MOUSE_BUTTON_LEFT)) playerClicked();
             updateGame();
             drawGame();
             swapBuffers();
