@@ -79,7 +79,6 @@ void mouseHandler(){
         int x = mousePos.x / cellSize;
         int y = mousePos.y / cellSize;
         grid[y * cols + x] = 1;
-        // printf("REGISTERED CLICK AT:\nX = %f\n Y = %f\n", mousePos.x, mousePos.y);
     }
 
 }
